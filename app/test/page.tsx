@@ -1,8 +1,12 @@
 'use client'
 
 import { Add, Copy, Cut, Edit, FolderShared, Notification, Paste, TextBold, TextItalic, TrashCan } from "@carbon/icons-react";
-import { Breadcrumb, BreadcrumbItem, Button, Checkbox, CheckboxGroup, ComboBox, DatePicker, DatePickerInput, Dropdown, FileUploader, Form, FormGroup, FormLabel, IconButton, InlineLoading, MenuItemRadioGroup, Menu, MenuItem, RadioButton, RadioButtonGroup, Search, Stack, MenuItemDivider, MenuItemSelectable, MenuItemGroup, Modal, TextInput, ComposedModal, ModalHeader, ModalBody, ModalFooter } from "@carbon/react";
-import { ChangeEventHandler, MouseEventHandler, useEffect, useState } from "react";
+import { Breadcrumb, BreadcrumbItem, Button, Checkbox, CheckboxGroup, ComboBox, DatePicker, DatePickerInput, Dropdown, 
+    FileUploader, Form, FormGroup, FormLabel, IconButton, InlineLoading, MenuItemRadioGroup, Menu, MenuItem, RadioButton, RadioButtonGroup, Search, Stack, 
+    MenuItemDivider, MenuItemSelectable, MenuItemGroup, Modal, TextInput, ComposedModal, ModalHeader, ModalBody, ModalFooter, MultiSelect, OverflowMenu, OverflowMenuItem, 
+    Pagination, PasswordInput, ProgressIndicator, ProgressStep, ButtonSet, ExpandableSearch, Tabs, TabList, Tab, TabPanels, TabPanel, 
+    DismissibleTag, TextArea} from "@carbon/react";
+import { MouseEventHandler, useEffect, useState } from "react";
 
 export default function Page(){
     const comboBoxItems = [
@@ -13,34 +17,51 @@ export default function Page(){
         {id:'option-4', text:'Example4'},
         {id:'option-5', text:'Example5', disabled: true},
     ];
+    const tags = [
+        {type:'warm-gray', text:'태그1', tagTitle:'태그1'},
+        {type:'high-contrast', text:'태그2', tagTitle:'태그2'},
+        {type:'outline', text:'태그3', tagTitle:'태그3'},
+        {type:'purple', text:'태그4', tagTitle:'태그4'},
+    ]
     const [menuTarget, setMenuTarget] = useState<HTMLElement | null>(null);
     const [menuPosition, setMenuPosition] = useState<{x:number, y:number} | null>({x:0, y:0});
     const [isOpen, setIsOpen] = useState<boolean>(false);
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [radioValue, setRadioValue] = useState<string>("");
+    const [renderedTags, setRenderedTags] = useState<{type:string, text:string, tagTitle:string}[]>(tags);
       
-    const handleComboBox = (selectedItem: any) => {
+    const handleComboBox = (selectedItem: object) => {
         console.log(selectedItem);
-    }
-    const handleMenuRadioChange:ChangeEventHandler<HTMLLIElement> = (event) => {
-        console.log(event);
-
     }
     const handleClickMenuOpenBtn:React.MouseEventHandler<HTMLButtonElement> = (event) => {
         setMenuPosition({x:event.pageX, y:event.pageY});
         setIsOpen(!isOpen);
     }
-    const handleClickOpenModal:MouseEventHandler<HTMLButtonElement> = (event) => setIsModalOpen(!isModalOpen);
+    const handleClickOpenModal:MouseEventHandler<HTMLButtonElement> = () => setIsModalOpen(!isModalOpen);
+    const handleChangeSelection = (selectedItem:{id:string, text:string}[]) => {
+        console.log(selectedItem);
+    }
+    const handleChangePagination = (event:object) => {
+        console.log(event);
+    }
+    const handleChangeProgressIndicator = (index:number) => {
+        setCurrentIndex(index);
+    }
+    const handleChangeRadio = (value:string|number) => {
+        setRadioValue(value as string);
+    }
+    const handleTagCloseBtn = (tag:{type:string; text:string; tagTitle:string;}) => setRenderedTags(renderedTags.filter(t => t.text !== tag.text));
 
     useEffect(() => {
-        let elem = document.getElementById("storybook-root");
+        const elem = document.getElementById("storybook-root");
         if(elem){
             setMenuTarget(elem);
         }
     }, [])
         
     return (
-        <div style={{display:"flex",flexDirection:"column",gap:"2rem"}}>
+        <Stack gap={9}>
             <h1>Carbon Design Test</h1>
 
             {/* breadcrumb */}
@@ -52,12 +73,16 @@ export default function Page(){
                 </Breadcrumb>
             </div>
 
+            <hr/>
+
             {/* Button */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
                 <h2>Button</h2>
                 <Button renderIcon={Add} onClick={() => alert("hello")}>버튼 테스트</Button>
                 <Button renderIcon={Add} tooltipAlignment="start" iconDescription="Add Icon" hasIconOnly onClick={() => alert("icon only")} />
             </div>
+
+            <hr/>
 
             {/* Checkbox */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
@@ -74,6 +99,8 @@ export default function Page(){
                 <Checkbox id="checkbox-3" labelText="test" helperText="Helper text goes here" />
             </div>
 
+            <hr/>
+
             {/* ComboBox */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
                 <h2>ComboBox</h2>
@@ -84,6 +111,8 @@ export default function Page(){
                     onChange={handleComboBox} 
                     autoAlign={true} typeahead/>
             </div>
+
+            <hr/>
 
             {/* DatePicker */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
@@ -97,12 +126,16 @@ export default function Page(){
                 </DatePicker>
             </div>
 
+            <hr/>
+
             {/* Dropdown */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
                 <h2>Dropdown</h2>
                 <Dropdown id="default" autoAlign={true} titleText="Dropdown label" helperText="This is some helper text" 
                     label="Choose an option" items={comboBoxItems} itemToString={item => item ? item.text : ''}  />
             </div>
+
+            <hr/>
 
             {/* IconButton */}
             <div>
@@ -115,11 +148,15 @@ export default function Page(){
                 </IconButton>
             </div>
 
+            <hr/>
+
             {/* InlineLoading */}
             <Stack gap={3}>
                 <h2>InlineLoading</h2>
                 <InlineLoading/>
             </Stack>
+
+            <hr/>
 
             {/* Menu */}
             <Stack gap={3}>
@@ -131,7 +168,7 @@ export default function Page(){
                             <div>
                                 <Menu target={menuTarget} x={menuPosition.x} y={menuPosition.y} label='menu' open={isOpen}>
                                     <MenuItem label="Share with" renderIcon={FolderShared}>
-                                        <MenuItemRadioGroup label='Share with' items={["None", "Product team", "Organization", "Company"]} defaultSelectedItem={"Product team"} onChange={handleMenuRadioChange}/>
+                                        <MenuItemRadioGroup label='Share with' items={["None", "Product team", "Organization", "Company"]} defaultSelectedItem={"Product team"}/>
                                     </MenuItem>
                                     <MenuItemDivider/>
                                     <MenuItem label="Cut" renderIcon={Cut}/>
@@ -150,6 +187,8 @@ export default function Page(){
                     }
                 </div>
             </Stack>
+
+            <hr/>
 
             {/* Modal */}
             <Stack gap={3}>
@@ -180,18 +219,161 @@ export default function Page(){
                 </ComposedModal>
             </Stack>
 
+            <hr/>
+
             {/* Modal-알림용 */}
             <Stack gap={3}>
                 <h2>Modal-알림용</h2>
                 <Button onClick={handleClickOpenModal} size='md'>Modal-알림용 Open</Button>
-                <Modal open={isModalOpen} size='sm' modalHeading="알림" aria-label="Modal content" primaryButtonText="확인" secondaryButtonText="취소" onRequestClose={e => setIsModalOpen(false)}>
+                <Modal open={isModalOpen} size='sm' modalHeading="알림" aria-label="Modal content" primaryButtonText="확인" secondaryButtonText="취소" onRequestClose={() => setIsModalOpen(false)}>
                     <p>
                         알림용으로 쓸 모달 테스트
                     </p>
                 </Modal>
             </Stack>
+
+            <hr/>
             
             {/* MultiSelect */}
+            <Stack gap={3}>
+                <h2>MultiSelect</h2>
+                <MultiSelect label="Multiselect Label" 
+                    id="carbon-multiselect-example" 
+                    titleText="Multiselect title" 
+                    helperText="This is helper text" 
+                    items={comboBoxItems}
+                    itemToString={item => item ? item.text : ''}
+                    selectionFeedback="top-after-reopen"
+                    autoAlign
+                    onChange={data => handleChangeSelection(data.selectedItems)}/>
+            </Stack>
+
+            <hr/>
+
+            {/* OverflowMenu */}
+            <Stack gap={3}>
+                <h2>OverflowMenu</h2>
+                <OverflowMenu aria-label="overflow-menu" size='md'>
+                    <OverflowMenuItem itemText="상세보기"/>
+                    <OverflowMenuItem itemText="현행버전 선택"/>
+                    <OverflowMenuItem itemText="삭제하기"/>
+                </OverflowMenu>
+            </Stack>
+
+            <hr/>
+
+            {/* Table Pagination */}
+            <Stack gap={3}>
+                <h2>Pagination (Table)</h2>
+                <Pagination pageSizes={[10, 20, 30, 40, 50]} totalItems={120} onChange={handleChangePagination}/>
+            </Stack>
+
+            <hr/>
+
+            {/* PasswordInput */}
+            <Stack gap={3}>
+                <h2>PasswordInput</h2>
+                <PasswordInput id="pwd-input-1" labelText="Password Input label" autoComplete="true"/>
+            </Stack>
+
+            <hr/>
+
+            {/* ProgressIndicator */}
+            <Stack gap={7}>
+                <h2>ProgressIndicator</h2>
+                <Stack gap={5}>
+                    <ProgressIndicator currentIndex={currentIndex} onChange={handleChangeProgressIndicator}>
+                        <ProgressStep label="기본 정보"/>
+                        <ProgressStep label="시나리오"/>
+                        <ProgressStep label="사용자 초대하기"/>
+                        <ProgressStep label="연동하기"/>
+                        <ProgressStep label="테스트하기"/>
+                    </ProgressIndicator>
+                    
+                    <ButtonSet>
+                        <Button kind='secondary' onClick={() => setCurrentIndex(prev => prev > 0 ? prev -=1 : prev)}>이전</Button>
+                        <Button onClick={() => setCurrentIndex(prev => prev < 4 ? prev+=1 : prev)}>다음</Button>
+                    </ButtonSet>
+                </Stack>
+            </Stack>
+
+            <hr/>
+
+            {/* RadioButton */}
+            <Stack gap={5}>
+                <h2>RadioButton</h2>
+                <p>{radioValue}</p>
+                <RadioButtonGroup legendText="Radio Button Group" name='radio-button-default-group' orientation="vertical" onChange={e => handleChangeRadio(e)}>
+                    <RadioButton labelText='Radio button label' value='radio-1'/>
+                    <RadioButton labelText='Radio button label' value='radio-2'/>
+                    <RadioButton labelText='Radio button label' value='radio-3'/>
+                </RadioButtonGroup>
+            </Stack>
+
+            <hr/>
+
+            {/* Search */}
+            <Stack gap={4}>
+                <h2>Search</h2>
+                <p>Default</p>
+                <Search labelText="Search" placeholder="Search"/>
+                <p>Expandable (Table에서 사용 가능)</p>
+                <ExpandableSearch labelText="Search" placeholder="Search" closeButtonLabelText="Clear search input"/>
+            </Stack>
+
+            <hr/>
+
+            {/* Tabs */}
+            <Stack gap={5}>
+                <h2>Tabs</h2>
+                <Tabs>
+                    <TabList>
+                        <Tab>채팅룸 기본정보</Tab>
+                        <Tab>시나리오</Tab>
+                        <Tab>초대된 에이전트</Tab>
+                        <Tab>초대된 사용자</Tab>
+                        <Tab>연동 정보</Tab>
+                    </TabList>
+                    <TabPanels>
+                        <TabPanel>Tab Panel1</TabPanel>
+                        <TabPanel>Tab Panel2</TabPanel>
+                        <TabPanel>Tab Panel3</TabPanel>
+                        <TabPanel>Tab Panel4</TabPanel>
+                        <TabPanel>Tab Panel5</TabPanel>
+                    </TabPanels>
+                </Tabs>
+            </Stack>
+
+            <hr/>
+
+            {/* Tag */}
+            <Stack gap={4}>
+                <h2>Tag</h2>
+                <div aria-label='Dismissible tags' role='group'>
+                    {
+                        renderedTags.map((tag:{type:string; text:string; tagTitle:string;}, index:number) => 
+                            <DismissibleTag key={index} type={tag.type} text={tag.text} tagTitle={tag.tagTitle} onClose={() => handleTagCloseBtn(tag)} />
+                        )
+                    }
+                </div>
+            </Stack>
+
+            <hr/>
+            
+            <Stack gap={4}>
+                <h2>TextInput, TextArea</h2>
+                <TextInput id='must-have-id' labelText="TextInput Test" placeholder="TextInput"/>
+                <TextArea id='text-area' labelText='TextArea Test'/>
+            </Stack>
+
+            <hr/>
+
+            <Stack gap={4}>
+                <h2>Toggle</h2>
+                {/* <Toggle labelText="Label" labelA="Off" labelB="On" defaultToggled id="toggle"/> */}
+            </Stack>
+
+            <hr/>
 
             {/* FormGroup, Form, FormLabel TextInput, TextArea, PasswordInput, FileUploader */}
             <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
@@ -219,6 +401,6 @@ export default function Page(){
                     </Stack>
                 </Form>
             </div>
-        </div>
+        </Stack>
     )
 }

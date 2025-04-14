@@ -1,16 +1,8 @@
 @use '@carbon/react';
 
-body{
-    padding: 2rem;
-
-    #storybook-root{
-        position: relative;
-    }
-}
 :root{
     overflow: hidden;
-    // --cds-link-primary: #ffbf3f;
-    // --cds-button-primary: #ffbf3f;
-    // --cds-button-primary-hover: #ffbf3f;
-    // --cds-text-on-color:#161616;
+}
+body{
+    padding:2rem;
 }
