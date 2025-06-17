@@ -14,8 +14,7 @@ const FolderDropzone = () => {
     const onDrop = (acceptedFiles: File[]) => {
         let files:FileInfo[] = [];
         acceptedFiles.forEach((file) => {
-            // console.log('File name:', file.name);
-            console.log('Relative path:', file.whttps://d2sf.naver.com/ko/story/23ebkitRelativePath);
+            console.log('Relative path:', (file as any).webkitRelativePath);
             files.push({
                 fileName: file.name,
                 filePath: (file as any).webkitRelativePath
